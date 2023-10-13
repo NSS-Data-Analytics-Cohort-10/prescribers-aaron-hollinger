@@ -83,9 +83,7 @@ FROM drug
 LEFT JOIN prescription
 USING (drug_name)
 
-
 -- b. Building off of the query you wrote for part a, determine whether more was spent (total_drug_cost) on opioids or on antibiotics. Hint: Format the total costs as MONEY for easier comparision.
-
 
 SELECT
 CASE
@@ -115,6 +113,8 @@ USING (fipscounty)
 WHERE state = 'TN'
 GROUP BY state
 
+--Answer: 42
+
 -- b. Which cbsa has the largest combined population? Which has the smallest? Report the CBSA name and total population.
 	
 SELECT cbsaname, population
@@ -132,25 +132,30 @@ USING (fipscounty)
 GROUP BY cbsaname
 ORDER BY sum_population ASC
 
+-- Answer: Largest is Nashville-Davidson--Murfreesboro--Franklin, TN, smallest is Morristown, TN
+
 -- c. What is the largest (in terms of population) county which is not included in a CBSA? Report the county name and population.
 
-SELECT fipscounty, cbsa, SUM(population) AS sum_population
+SELECT county, cbsa, SUM(population) AS sum_population
 FROM fips_county
 LEFT JOIN cbsa
 USING (fipscounty)
 LEFT JOIN population
 USING (fipscounty)
 WHERE cbsa IS NULL
-GROUP BY cbsa, fipscounty
+GROUP BY county, cbsa
 ORDER BY sum_population ASC
 
-SELECT fipscounty, cbsa, population
+--Answer: Largest is Sevier, smallest is Pickett
+
+SELECT county, cbsa, population
 FROM fips_county
 LEFT JOIN cbsa
 USING (fipscounty)
 LEFT JOIN population
 USING (fipscounty)
 WHERE cbsa IS NULL
+GROUP BY county, cbsa, population
 ORDER BY population ASC
 
 6. 
