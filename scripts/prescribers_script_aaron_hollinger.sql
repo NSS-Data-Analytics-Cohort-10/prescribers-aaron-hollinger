@@ -102,6 +102,7 @@ CASE
 	ELSE 'neither'
 END
 
+--Answer: More money was spent on opioids.
 
 5. 
 -- a. How many CBSAs are in Tennessee? **Warning:** The cbsa table contains information for all states, not just Tennessee.
@@ -186,20 +187,6 @@ WHERE total_claim_count >= 3000
 -- 7. The goal of this exercise is to generate a full list of all pain management specialists in Nashville and the number of claims they had for each opioid. **Hint:** The results from all 3 parts will have 637 rows.
 
 -- a. First, create a list of all npi/drug_name combinations for pain management specialists (specialty_description = 'Pain Management) in the city of Nashville (nppes_provider_city = 'NASHVILLE'), where the drug is an opioid (opiod_drug_flag = 'Y'). **Warning:** Double-check your query before running it. You will only need to use the prescriber and drug tables since you don't need the claims numbers yet.
-
-SELECT nppes_provider_city
-FROM prescriber
-GROUP BY nppes_provider_city
-ORDER BY nppes_provider_city DESC
-
-SELECT specialty_description, nppes_provider_city, opioid_drug_flag, COUNT(npi) AS count_npi
-FROM prescriber
-	CROSS JOIN prescription
-USING (npi)
-INNER JOIN drug
-USING (drug_name)
-GROUP BY specialty_description, nppes_provider_city, opioid_drug_flag
-ORDER BY count_npi DESC
 
 SELECT npi, drug_name, specialty_description, nppes_provider_city, opioid_drug_flag
 FROM prescriber
