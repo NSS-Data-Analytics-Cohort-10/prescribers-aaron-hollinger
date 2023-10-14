@@ -9,6 +9,7 @@ SELECT npi, SUM(total_claim_count) AS sum_claim
 FROM prescription
 GROUP BY npi
 ORDER BY sum_claim DESC
+LIMIT 1;
 
 --Answer: NPI 1881634483, total number of claimes 99707
 
@@ -20,6 +21,7 @@ LEFT JOIN prescriber
 USING (npi)
 GROUP BY nppes_provider_first_name, nppes_provider_last_org_name, specialty_description
 ORDER BY sum_claim DESC
+LIMIT 1;
 
 --Answer: Bruce Pendley, Family Practice, total number of claims is 99707
 
@@ -44,11 +46,6 @@ ORDER BY sum_claim DESC
 3. 
 -- a. Which drug (generic_name) had the highest total drug cost?
 
-SELECT generic_name, ROUND(total_drug_cost, 0)
-FROM prescription
-LEFT JOIN drug
-USING (drug_name)
-ORDER BY total_drug_cost DESC
 
 SELECT generic_name, SUM(total_drug_cost) AS sum_total_cost
 FROM prescription
@@ -59,16 +56,17 @@ ORDER BY sum_total_cost DESC
 
 --ANSWER: INSULIN GLARGINE,HUM.REC.ANLOG
 
-    b. Which drug (generic_name) has the hightest total cost per day? **Bonus: Round your cost per day column to 2 decimal places. Google ROUND to see how this works.**
+-- b. Which drug (generic_name) has the hightest total cost per day? **Bonus: Round your cost per day column to 2 decimal places. Google ROUND to see how this works.**
 
-SELECT generic_name, ROUND(SUM((total_drug_cost) / 365),2) AS sum_total_cost_per_day
+SELECT generic_name, ROUND(SUM(total_drug_cost) / SUM(total_day_supply), 2) AS sum_total_cost_per_day
 FROM prescription
 LEFT JOIN drug
 USING (drug_name)
 GROUP BY generic_name
 ORDER BY sum_total_cost_per_day DESC
+LIMIT 1;
 
---ANSWER: INSULIN GLARGINE,HUM.REC.ANLOG
+--ANSWER: C1 ESTERASE INHIBITOR
 
 4. 
 -- a. For each drug in the drug table, return the drug name and then a column named 'drug_type' which says 'opioid' for drugs which have opioid_drug_flag = 'Y', says 'antibiotic' for those drugs which have antibiotic_drug_flag = 'Y', and says 'neither' for all other drugs.
@@ -118,12 +116,6 @@ GROUP BY state
 
 -- b. Which cbsa has the largest combined population? Which has the smallest? Report the CBSA name and total population.
 	
-SELECT cbsaname, population
-FROM cbsa
-LEFT JOIN population
-USING (fipscounty)
-ORDER BY population ASC
-
 SELECT cbsaname, SUM(population) AS sum_population
 FROM cbsa
 LEFT JOIN fips_county
@@ -148,16 +140,6 @@ GROUP BY county, cbsa
 ORDER BY sum_population ASC
 
 --Answer: Largest is Sevier, smallest is Pickett
-
-SELECT county, cbsa, population
-FROM fips_county
-LEFT JOIN cbsa
-USING (fipscounty)
-LEFT JOIN population
-USING (fipscounty)
-WHERE cbsa IS NULL
-GROUP BY county, cbsa, population
-ORDER BY population ASC
 
 6. 
 -- a. Find all rows in the prescription table where total_claims is at least 3000. Report the drug_name and the total_claim_count.
